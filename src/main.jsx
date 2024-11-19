@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './pages/Login.jsx'
 import Landingpage from './pages/Landingpage.jsx'
+import Signup from './pages/Signup.jsx'
 
 
 
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
     {
       path : "/login",
       element : <Login/>
+    },
+    {
+      path : "/signup",
+      element : <Signup/>
     },
   ]
 }
