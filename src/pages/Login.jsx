@@ -3,36 +3,44 @@ import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { set, useForm } from "react-hook-form";
 import authService from "../Api/Auth.js";
+import { useDispatch } from "react-redux";
+import { login as authLogin } from "../Store/authSlice.js"
 
 function Login() {
 
     const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [error , setError] = useState("");
+    const [error, setError] = useState("");
+    const dispatch = useDispatch();
 
-  const  login = (data) => {
+    const login = async (data) => {
 
-    console.log(data);
+        console.log(data);
         try {
-            const response = authService.login(data);
+            const response = await authService.login(data);
 
-            if(response.status === 200){
+            console.log("response", response);
+
+            if (response?.status === 200) {
                 console.log(response.data);
-                localStorage.setItem("token" , response.data.token);
-                localStorage.setItem("user" , JSON.stringify(response.data.user));
+                sessionStorage.setItem("token", response?.data?.data?.refreshToken);
+                localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
+
+                const userData = response?.data?.data?.user;
+                dispatch(authLogin(userData.payload))
                 navigate("/");
             }
         } catch (error) {
             setError(error.message);
         }
     }
-    
+
 
 
     return (
 
-       
+
         <>
             <h1 className="pl-3 pt-1 text-5xl text-red-600 bold font-mono">StreamNow</h1>
             <div className="flex flex-col justify-center items-center  ">
@@ -50,7 +58,7 @@ function Login() {
                                 type="email"
                                 placeholder="Email"
                                 className="pt-4 pb-4 w-full py-2 px-3 bg-gray-200 border border-gray-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 "
-                                                                
+
                                 {...register("email", {
                                     required: "Email is required",
                                     validate: {
@@ -59,7 +67,7 @@ function Login() {
                                             "Email address must be a valid address"
                                     }
                                 })}
-                                />
+                            />
                             {errors.email && <p className="text-red-800">{errors.email.message}</p>}
                             <input
                                 type="password"
@@ -72,7 +80,7 @@ function Login() {
                                         message: "Password must be at least 8 characters long"
                                     }
                                 })}
-                                />
+                            />
 
                             <button type="submit" className="bg-[#4F46E5] text-white py-2 px-4 rounded-md hover:bg-[#4338CA]">Sign In</button>
                             <p className="text-center">OR</p>

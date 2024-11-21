@@ -1,16 +1,32 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import authService from '../Api/Auth.js'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 
 function Signup() {
 
+    const navigate = useNavigate();
+    const[error , Seterror] = useState("");
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const onSubmit = (data) => {
-        console.log("Form Data:", data);
-        // Perform login logic here
-        // dispatch(authLogin(data)) if using Redux
+    const onSubmit =  async (data) => {
+        try {
+            console.log("Form Data:", data);
+            const response = await authService.signup(data);
+            console.log("response", response);
+
+            if(response?.status === 201){
+                // Perform login logic here
+                // console.log("response", response);
+                navigate("/login")
+            }
+            // dispatch(authLogin(data)) if using Redux
+        } catch (error) {
+            Seterror(error.message);
+        }
       };
 
     return (
@@ -24,7 +40,7 @@ function Signup() {
                         {/* bg-gradient-to-b from-cyan-500 to-blue-500  */}
                         <div >
                             <header>
-                                <h1 className="text-4xl text-left mb-7">Sign In</h1>
+                                <h1 className="text-4xl text-left mb-7">Sign up</h1>
                             </header>
                             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
@@ -32,7 +48,7 @@ function Signup() {
                                     type="text"
                                     placeholder='Full Name'
                                     className='pt-4 pb-4 w-full py-2 px-3 bg-gray-200 border border-gray-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500'
-                                    {...register("firstName", { required: true, maxLength: 20 })}
+                                    {...register("fullName", { required: true, maxLength: 20 })}
                                 />
                                 <div>
                                 <input

@@ -12,7 +12,12 @@ function Header() {
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
 
-                            <input className='ml-2' type="text" name="" id="search" placeholder='Search..' />
+                            <input
+                                className='ml-2 w-100'
+                                type="text"
+                                name=""
+                                id="search"
+                                placeholder='Search..' />
                         </form>
                         <div className='ml-80'>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -20,9 +25,9 @@ function Header() {
                             </svg>
                         </div>
                     </div>
-                    <div className='h-16 w-1 bg-black'>
+                    {/* <div className='h-16 w-1 bg-black'>
 
-                    </div>
+                    </div> */}
 
                     <div className='w-90 h-16 flex flex-row mr-4 py-4 absolute top-0 right-0 '>
                         <img className='rounded-full ml-4 border-2 border-gray-500' src={logo} alt="" />
