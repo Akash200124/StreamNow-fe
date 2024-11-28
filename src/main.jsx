@@ -8,6 +8,8 @@ import Landingpage from './pages/Landingpage.jsx'
 import Signup from './pages/Signup.jsx'
 import { Provider } from 'react-redux'
 import store from './Store/store.js'
+import Video from './pages/VideoPage.jsx'
+import VideoPage from './pages/VideoPage.jsx'
 
 
 
@@ -29,6 +31,10 @@ const router = createBrowserRouter([
         path: "/signup",
         element: <Signup />
       },
+      {
+        path: "/video",
+        element: <VideoPage />
+      }
     ]
   }
 ])

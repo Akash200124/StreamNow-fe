@@ -5,11 +5,12 @@ import "../css/activeClass.css"
 
 function SideMenu() {
     return (
-        <div className='bg-[#4F46E5] w-[320px] h-screen px-4 pb-3 flex flex-col'>
+        <div className='bg-[#4F46E5] w-[280px] h-screen px-4 pb-3 flex flex-col'>
             <div className='pt-3 flex flex-row'>
                 <img src={logo} alt="" width={50} height={40} />
                 <h2 className='pl-3 pt-1 text-3xl bold font-mono'>StreamNow</h2>
             </div>
+            
             <div className='flex flex-col justify-between h-full'>
                 <div className='flex flex-col'>
                     <ul className='p-2 text-white'>

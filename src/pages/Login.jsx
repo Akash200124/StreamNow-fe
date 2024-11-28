@@ -23,9 +23,14 @@ function Login() {
             console.log("response", response);
 
             if (response?.status === 200) {
-                console.log(response.data);
-                sessionStorage.setItem("token", response?.data?.data?.refreshToken);
-                localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
+                // console.log("response".response?.data?.data?.refreshToken);
+
+                // console.log("responsedat", response?.data?.data?.acessToken);
+                
+                document.cookie = `accessToken=${response?.data?.data?.acessToken}`
+                document.cookie = `user=${JSON.stringify(response?.data?.data?.user)}`
+                // sessionStorage.setItem("token", response?.data?.data?.refreshToken);
+                // localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
 
                 const userData = response?.data?.data?.user;
                 dispatch(authLogin(userData.payload))
