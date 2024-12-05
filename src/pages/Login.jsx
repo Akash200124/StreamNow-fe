@@ -9,31 +9,29 @@ import { login as authLogin } from "../Store/authSlice.js"
 function Login() {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [error, setError] = useState("");
-    const dispatch = useDispatch();
 
+  
     const login = async (data) => {
 
         console.log(data);
         try {
+            // api call 
             const response = await authService.login(data);
-
             console.log("response", response);
 
             if (response?.status === 200) {
-                // console.log("response".response?.data?.data?.refreshToken);
 
-                // console.log("responsedat", response?.data?.data?.acessToken);
-                
                 document.cookie = `accessToken=${response?.data?.data?.acessToken}`
                 document.cookie = `user=${JSON.stringify(response?.data?.data?.user)}`
                 // sessionStorage.setItem("token", response?.data?.data?.refreshToken);
                 // localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
 
                 const userData = response?.data?.data?.user;
-                dispatch(authLogin(userData.payload))
+                dispatch(authLogin(userData));
                 navigate("/");
             }
         } catch (error) {

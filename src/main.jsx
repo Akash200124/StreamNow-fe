@@ -7,10 +7,12 @@ import Login from './pages/Login.jsx'
 import Landingpage from './pages/Landingpage.jsx'
 import Signup from './pages/Signup.jsx'
 import { Provider } from 'react-redux'
-import store from './Store/store.js'
+import store, { persistor } from './Store/store.js'
 import Video from './pages/VideoPage.jsx'
 import VideoPage from './pages/VideoPage.jsx'
-
+import ProtectedRoute from './conf/ProtectedRoute.jsx'
+import { PersistGate } from 'redux-persist/integration/react';
+import Upload from './pages/Upload.jsx'
 
 
 const router = createBrowserRouter([
@@ -20,7 +22,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Landingpage />
+        element: (
+          <ProtectedRoute>
+            <Landingpage />
+          </ProtectedRoute>
+        )
 
       },
       {
@@ -33,7 +39,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/video",
-        element: <VideoPage />
+        element: (
+          <ProtectedRoute>
+            <VideoPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "/upload",
+        element: (
+          <ProtectedRoute>
+            <Upload />
+          </ProtectedRoute>
+        )
       }
     ]
   }
@@ -44,7 +62,11 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      < RouterProvider router={router} />
+
+      <PersistGate loading={null} persistor={persistor}>
+        < RouterProvider router={router} />
+      </PersistGate>
+
     </Provider>
   </StrictMode>,
 )

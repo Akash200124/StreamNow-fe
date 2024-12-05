@@ -11,12 +11,13 @@ function VideoPage() {
 
     const location = useLocation();
     const video = location.state?.video;
-    console.log("video", video);
+
+    // console.log("video", video);
 
     const [liked, setLiked] = useState(false); // Track whether the video is liked
     const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
 
- 
     const videoId = video?._id;
 
     useEffect(() => {
@@ -31,9 +32,9 @@ function VideoPage() {
                 });
 
                 if (response.status === 200) {
-                    console.log("Video details fetched successfully");
+                    // console.log("Video details fetched successfully");
                     // Update the video state with the fetched data  
-                    // console.log("comments", response);  
+                    // console.log("response", response?.data?.data);
                     setComments(response?.data?.data);
                 } else {
                     console.log("Error in fetching video details");
@@ -48,16 +49,39 @@ function VideoPage() {
 
 
 
-    console.log("comments", comments);
-
-
-
+    console.log("commentsssss", comments);
+    console.log("newcoment", newComment);
 
     if (!video) {
         return <p>No video details found.</p>;
     }
 
+    const addComment = async () => {
+        try {
+            const url = `${conf.baseUrl}/comment/add-comment`;
+            const response = await axios.post(url, {
+                videoId: videoId,
+                content: newComment
+            }, {
+                withCredentials: true // Ensures cookies are sent with the request
+            });
+
+            if (response.statusCode == 200) {
+                setComments((prevComments) => [...prevComments, response?.data])
+            } else {
+                console.log("Error in adding comment");
+            }
+
+        } catch (e) {
+            console.error("Error while adding commnets ", e)
+        }
+    }
+
+
+
     return (
+
+
         <div>
             <div className='pt-3 flex flex-row ml-3 '>
                 <img src={logo} alt="" width={50} height={40} />
@@ -79,6 +103,7 @@ function VideoPage() {
                 {/* <p className='text-sm'>{video.createdAt}</p> */}
             </div>
 
+
             {/* comments section  */}
             <div className="p-2 mt-3 ml-5 w-[1000px]">
                 200 comments
@@ -90,6 +115,7 @@ function VideoPage() {
                     id="comment"
                     placeholder='Add a comment'
                     className='w-[1000px] h-[40px] '
+                    onChange={(e) => setNewComment(e.target.value)}
                 />
                 <div className="w-[1000px] h-[2px] bg-black"></div>
 
@@ -98,6 +124,7 @@ function VideoPage() {
                     <button
                         className="px-4 py-2 border border-black text-black font-medium rounded hover:bg-gray-100 active:bg-gray-200"
                         type="reset"
+                        onClick={() => { setNewComment("") }}
 
                     >
                         Cancel
@@ -105,6 +132,7 @@ function VideoPage() {
                     <button
                         className="px-4 py-2 bg-blue-500 text-white font-medium rounded hover:bg-blue-600 active:bg-blue-700 ml-2"
                         type="submit"
+                        onClick={addComment}
                     >
                         Comment
                     </button>
@@ -116,8 +144,9 @@ function VideoPage() {
             <div className="ml-5 p-2 mt-3 w-[1000px]">
 
                 {comments?.map((comment) => (
-                    <Comments key={comment._id} comment={comment} />
+                    <Comments key={comment._id} comment={comment}  />
                 ))}
+
             </div>
 
 
