@@ -13,6 +13,7 @@ import VideoPage from './pages/VideoPage.jsx'
 import ProtectedRoute from './conf/ProtectedRoute.jsx'
 import { PersistGate } from 'redux-persist/integration/react';
 import Upload from './pages/Upload.jsx'
+import Tweet from './pages/Tweet.jsx'
 
 
 const router = createBrowserRouter([
@@ -50,6 +51,13 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Upload />
+          </ProtectedRoute>
+        )
+      },{
+        path:"/chat", 
+        element: (
+          <ProtectedRoute>
+            <Tweet />
           </ProtectedRoute>
         )
       }
