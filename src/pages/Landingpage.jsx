@@ -33,6 +33,7 @@ function Landingpage() {
         videos();
     }, []);
 
+    console.log("authStatus",authStatus)
 
     return (
         <>

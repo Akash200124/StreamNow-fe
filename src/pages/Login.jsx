@@ -5,6 +5,8 @@ import { set, useForm } from "react-hook-form";
 import authService from "../Api/Auth.js";
 import { useDispatch } from "react-redux";
 import { login as authLogin } from "../Store/authSlice.js"
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css"
 
 function Login() {
 
@@ -14,7 +16,9 @@ function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [error, setError] = useState("");
 
-  
+    
+
+
     const login = async (data) => {
 
         console.log(data);
@@ -33,9 +37,12 @@ function Login() {
                 const userData = response?.data?.data?.user;
                 dispatch(authLogin(userData));
                 navigate("/");
+                toast.success('Hey 👋!')
+                
             }
         } catch (error) {
             setError(error.message);
+            toast.error(error.message);
         }
     }
 
@@ -108,6 +115,19 @@ function Login() {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+
+            />
         </>
     )
 }
