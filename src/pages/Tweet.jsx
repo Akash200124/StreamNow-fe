@@ -1,84 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import SideMenu from '../components/SideMenu';
-import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
-import conf from '../conf/config.js';
+import React, { useEffect, useState } from "react";
+import SideMenu from "../components/SideMenu";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+import conf from "../conf/config.js";
 import { io } from "socket.io-client";
 
- // Replace with your server's URL if different
-
 function Tweet() {
-
-    const socket = io("http://localhost:8000:ws", {
-        transports: ["websocket", "polling"], // Use WebSocket or fallback to polling
-        withCredentials: true,               // Allow cookies if required
-      });
-      
-      socket.on("connect", () => {
-        console.log("Connected to server:", socket.id);
-      });
-      
-      socket.on("receive_message", (data) => {
-        console.log("Message received:", data);
-      });
-
-    const [tweet, setTweet] = useState('');
+    const [tweet, setTweet] = useState("");
     const [allTweet, setAllTweet] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [socket, setSocket] = useState(null);
+
+    // Initialize Socket.io
+    useEffect(() => {
+        const newSocket = io("http://localhost:3000");
+        setSocket(newSocket);
+
+        newSocket.on("connect", () => {
+            console.log("Connected to server:", newSocket.id);
+        });
+
+        newSocket.on("receive_message", (data) => {
+            console.log("Message received:", data);
+            setAllTweet((prevTweets) => [data, ...prevTweets]);
+        });
+
+        newSocket.on("error", (err) => {
+            console.error("Socket error:", err);
+        });
+
+        return () => {
+            newSocket.disconnect(); // Clean up socket connection
+        };
+    }, []);
 
     // Handle Tweet Submission
     const handleTweet = async () => {
         if (!tweet.trim()) {
-            toast.error('Tweet cannot be empty!');
+            toast.error("Tweet cannot be empty!");
             return;
         }
 
         try {
             const response = await axios(`${conf.baseUrl}/tweet/create-tweet`, {
-                method: 'POST',
+                method: "POST",
                 withCredentials: true,
                 data: { content: tweet },
             });
 
-            console.log('Tweet successfully created:', response.data);
+            console.log("Tweet successfully created:", response.data);
 
-            // Broadcast the new tweet via Socket.IO
-            socket.emit("send_message", { text: tweet, id: socket.id });
-
-            setTweet(''); // Clear input after tweet
+            if (socket) {
+                socket.emit("send_message", response.data);
+            }
+            setTweet("");
         } catch (error) {
-            console.error('Failed to create tweet:', error.response ? error.response.data : error.message);
-            toast.error('Failed to create tweet.');
+            console.error("Failed to create tweet:", error.response?.data || error.message);
+            toast.error("Failed to create tweet.");
         }
     };
 
-    // Fetch All Tweets
+    // Fetch All Tweets on Mount
     useEffect(() => {
         const getAllTweets = async () => {
             try {
                 const response = await axios(`${conf.baseUrl}/tweet/getAllUser-tweet`, {
-                    method: 'GET',
+                    method: "GET",
                     withCredentials: true,
                 });
-                console.log('All tweets:', response?.data?.data);
-                setAllTweet(response?.data?.data);
+                setAllTweet(response?.data?.data || []);
             } catch (error) {
-                console.error('Failed to get tweets:', error.response ? error.response.data : error.message);
-                toast.error('Failed to load tweets.');
+                console.error("Failed to get tweets:", error.response?.data || error.message);
+                toast.error("Failed to load tweets.");
             }
         };
 
         getAllTweets();
-
-        // Socket listener for new messages
-        socket.on("receive_message", (data) => {
-            setMessages((prevMessages) => [...prevMessages, data]);
-        });
-
-        return () => {
-            socket.off("receive_message"); // Clean up listener
-        };
-    }, []); 
+    }, [tweet]);
 
     return (
         <>
